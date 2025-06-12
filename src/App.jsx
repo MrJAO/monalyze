@@ -1,5 +1,5 @@
 // App.jsx
-// Force Rebuild
+// ForceRebuild
 import './App.css';
 import StatsPanel from './components/StatsPanel';
 import PianoVisualizer from './components/PianoVisualizer';

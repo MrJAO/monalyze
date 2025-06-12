@@ -1,16 +1,22 @@
 name: Backfill Daily TX
 
 on:
-  workflow_dispatch:        # ← manual “Run workflow” button
+  # allow manual “Run workflow” from the Actions tab
+  workflow_dispatch:
+  # backfill every 10 minutes while you’re seeding the 7 days
   schedule:
-    - cron: '*/10 * * * *'   # every 10 minutes while you’re back-filling
-# …then later switch to '5 0 * * *'…
+    - cron: '*/10 * * * *'
+  # …later, after your 7-day history is filled, switch to:
+  #   schedule:
+  #     - cron: '5 0 * * *'   # once per day at 00:05 UTC
+
+concurrency:
+  group: backfill-daily-tx
+  # don’t cancel the running job when a new one is triggered, queue instead
+  cancel-in-progress: false
 
 jobs:
   backfill:
-    concurrency:
-      group: backfill-daily-tx
-      cancel-in-progress: true
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -20,6 +26,6 @@ jobs:
       - run: npm ci
       - run: npm run backfill
         env:
-          VITE_ALCHEMY_KEY:   ${{ secrets.VITE_ALCHEMY_KEY }}
-          KV_REST_API_URL:    ${{ secrets.KV_REST_API_URL }}
-          KV_REST_API_TOKEN:  ${{ secrets.KV_REST_API_TOKEN }}
+          VITE_ALCHEMY_KEY:  ${{ secrets.VITE_ALCHEMY_KEY }}
+          KV_REST_API_URL:   ${{ secrets.KV_REST_API_URL }}
+          KV_REST_API_TOKEN: ${{ secrets.KV_REST_API_TOKEN }}

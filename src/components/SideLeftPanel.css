@@ -1,0 +1,54 @@
+.panel-box {
+  background: #2a1558;
+  color: #d1b3ff;
+  padding: 1.5rem;
+  border-radius: 0.75rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.3);
+  max-width: 100%;
+  overflow-x: hidden;
+  box-sizing: border-box;
+  border: 1px solid #5e3ab9;
+  transition: background 0.3s ease, box-shadow 0.3s ease;
+}
+
+.panel-box:hover {
+  background: #1e0c57;
+  box-shadow: 0 0 12px rgba(91, 52, 219, 0.5);
+}
+
+/* Center content inside the panel */
+.stats-boxes {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 1.25rem;
+}
+
+.stat-item {
+  border: 2px solid #facc15;
+  border-radius: 6px;
+  padding: 1rem;
+  background-color: #3c1e6e;
+  font-size: 0.9rem;
+  color: #fceaff;
+  width: 100%;
+  max-width: 260px;
+}
+
+.token-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-top: 0.75rem;
+}
+
+.token-list div {
+  font-size: 0.8rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  word-break: break-word;
+}

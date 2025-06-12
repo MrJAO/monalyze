@@ -1,0 +1,69 @@
+/* DailyTransactions.css */
+
+.daily-container {
+  padding: 1rem;
+  border: 2px solid #4f46e5;
+  border-radius: 0.5rem;
+  margin-top: 2rem;
+}
+.daily-container h2 {
+  margin-bottom: 1rem;
+  color: #fff;
+}
+
+.bars {
+  display: flex;
+  gap: 0.5rem;
+  align-items: flex-end;
+  height: 12rem;
+}
+
+.bar-wrapper {
+  flex: 1;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.bar {
+  width: 100%;
+  background: linear-gradient(to top, #facc15, #d946ef);
+  background-size: 100% 200%;          /* double-height for color wave */
+  background-position: 0% 0%;
+  position: relative;
+  transition: height 0.3s ease;
+  transform-origin: bottom;
+  animation: colorwave 2s ease-in-out infinite; /* continuous color wave */
+}
+
+.bar.pulse {
+  animation:
+    pulse 0.4s ease-out,               /* height pulse */
+    colorwave 2s ease-in-out infinite; /* keep color wave running */
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scaleY(1); }
+  50%      { transform: scaleY(1.2); }
+}
+
+@keyframes colorwave {
+  0%   { background-position: 0% 0%; }
+  50%  { background-position: 0% 100%; }
+  100% { background-position: 0% 0%; }
+}
+
+.bar-label {
+  position: absolute;
+  top: -1.2rem;
+  font-size: 0.75rem;
+  color: #fff;
+}
+
+.bar-date {
+  margin-top: 0.25rem;
+  font-size: 0.75rem;
+  color: #fff;
+}

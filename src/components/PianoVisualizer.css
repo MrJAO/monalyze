@@ -1,0 +1,70 @@
+.piano-wrapper {
+  position: relative;
+  width: fit-content;
+  max-width: 100%;
+  height: 200px;
+  margin: 0 auto;
+  border: 2px solid #333;
+  background-color: #eee;
+  overflow-x: auto;
+  overflow-y: hidden;
+  box-sizing: border-box;
+}
+
+/* Wrap actual key width only */
+.white-keys {
+  display: flex;
+  height: 100%;
+  z-index: 0;
+  width: fit-content;
+  min-width: 882px; /* 21 keys * 42px */
+  margin: 0 auto;
+}
+
+.white-key {
+  width: 42px;
+  height: 100%;
+  border: 1px solid #333;
+  background: white;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  font-size: 10px;
+  padding-bottom: 5px;
+  box-sizing: border-box;
+  transition: background 0.3s ease;
+}
+
+.white-key.active {
+  background: #facc15;
+}
+
+.black-keys {
+  position: absolute;
+  top: 0;
+  height: 60%;
+  width: 100%;
+  z-index: 10;
+  pointer-events: none;
+}
+
+.black-key {
+  width: 28px;
+  height: 100%;
+  background: black;
+  position: absolute;
+  z-index: 1;
+  color: white;
+  font-size: 9px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding-bottom: 4px;
+  border-radius: 0 0 4px 4px;
+  transition: background 0.3s ease;
+}
+
+.black-key.active {
+  background: #facc15;
+}

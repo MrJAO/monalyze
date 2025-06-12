@@ -1,0 +1,57 @@
+/* LatestBlocksMock.css */
+
+.blocks-wrapper {
+  margin-top: 0;
+}
+
+.block-title {
+  text-align: center;
+  font-size: 1.25rem;
+  font-weight: bold;
+  margin-bottom: 0.75rem;
+  color: #fff; /* stays white on dark background */
+}
+
+.block-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.block-item {
+  background: #fff;
+  border-radius: 0.5rem;
+  overflow: hidden;
+  position: relative;
+  /* remove padding here; it will move into .staff-lines */
+}
+
+.block-item .staff-lines {
+  /* repeat lines every 1.4em to match line-height */
+  background: repeating-linear-gradient(
+    to bottom,
+    #ccc,
+    #ccc 1px,
+    transparent 1px,
+    transparent 1.4em
+  );
+  background-size: 100% 1.4em;
+  padding: 0.75rem 0.75rem 1rem;  /* top/right/bottom */
+  position: relative;
+}
+
+.clef {
+  position: absolute;
+  left: 0.75rem;
+  top: 0.75rem;                  /* align with first line */
+  font-size: clamp(1rem, 2vw, 1.5rem);
+}
+
+.block-info {
+  margin-left: 2.5rem;           /* room for the clef */
+  text-align: center;
+  font-size: clamp(0.75rem, 1.2vw, 1rem);
+  line-height: 1.4;
+  color: #000;                   /* ensure black text */
+  word-break: break-word;
+}

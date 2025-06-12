@@ -1,6 +1,12 @@
 // api/daily-tx.js
 import { Redis } from '@upstash/redis';
-import { fetchDailyTransactionCounts } from '../lib/fetchDailyTx.js';
+import { Alchemy } from 'alchemy-sdk';
+
+const MONAD_RPC = "https://monad-testnet.rpc.hypersync.xyz";
+const alchemy = new Alchemy({
+  apiKey: process.env.VITE_ALCHEMY_KEY,
+  url:   `https://monad-testnet.g.alchemy.com/v2/${process.env.VITE_ALCHEMY_KEY}`,
+});
 
 const redis = new Redis({
   url:   process.env.KV_REST_API_URL,
@@ -8,29 +14,57 @@ const redis = new Redis({
 });
 const CACHE_KEY = 'daily-tx';
 
+// 1️⃣ on-chain fetch for the last 7 days
+async function fetchDailyTransactionCounts() {
+  // (pull latest block, binary-search timestamps, batch-count tx, etc…)
+  // -- copy in your optimized version here --
+  // return [{ date: '2025-06-05', count: 123 }, …]
+}
+
+// 2️⃣ helper to compute TTL until next UTC 00:05
+function secondsUntilTomorrow0500() {
+  const now = Date.now();
+  const tomorrow0500 = Date.UTC(
+    new Date().getUTCFullYear(),
+    new Date().getUTCMonth(),
+    new Date().getUTCDate() + 1,
+    0, 5, 0
+  );
+  return Math.max(60, Math.floor((tomorrow0500 - now) / 1000));
+}
+
 export default async function handler(req, res) {
-  console.log('🔔 /api/daily-tx', req.query);
+  const isCron = req.headers['x-vercel-cron'] === 'true';
 
-  // manual purge
-  if (req.method==='DELETE' || req.query.purge==='true') {
+  // manual purge via DELETE or ?purge=true
+  if (req.method === 'DELETE' || req.query.purge === 'true') {
     await redis.del(CACHE_KEY);
-    return res.json({ purged: true });
+    return res.status(200).json({ purged: true });
   }
 
-  // force-fetch now (will run backfill, may be slow!)
-  if (req.query.force==='true') {
-    console.log('🚨 force on-chain backfill');
+  // force on-chain backfill via ?force=true
+  if (req.query.force === 'true') {
     const fresh = await fetchDailyTransactionCounts();
-    await redis.set(CACHE_KEY, fresh, { ex: 24*3600 });
-    return res.json(fresh);
+    await redis.set(CACHE_KEY, fresh, { ex: 24 * 3600 });
+    return res.status(200).json(fresh);
   }
 
-  // normal: try KV
-  let data = await redis.get(CACHE_KEY);
+  // **cron run**: re-compute and overwrite KV
+  if (isCron) {
+    console.log('🕒 cron-daily-tx invoked');
+    const fresh = await fetchDailyTransactionCounts();
+    const ttl   = secondsUntilTomorrow0500();
+    await redis.set(CACHE_KEY, fresh, { ex: ttl });
+    console.log(`✅ cache updated (${fresh.length} days), expires in ${ttl}s`);
+    return res.status(200).json({ ok: true });
+  }
+
+  // **normal browser GET**: read from KV
+  const data = await redis.get(CACHE_KEY);
   if (!data) {
     console.log('❌ cache miss');
-    return res.status(204).end();    // no content yet
+    return res.status(204).end();
   }
   console.log(`✅ cache hit (${data.length} days)`);
-  res.json(data);
+  return res.status(200).json(data);
 }

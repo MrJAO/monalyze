@@ -10,14 +10,45 @@ const alchemy = new Alchemy({
 
 const MONAD_RPC = "https://monad-testnet.rpc.hypersync.xyz";
 const CACHE_KEY = 'daily-tx';
-const CACHE_TTL = 60 * 60 * 24; // 24 hours
 
 const redis = new Redis({
   url: process.env.KV_REST_API_URL,
   token: process.env.KV_REST_API_TOKEN,
 });
 
-// fetch a block header via hypersync RPC
+// small helper to pause between batches
+const sleep = (ms) => new Promise(r => setTimeout(r, ms));
+
+// batch‐sum tx counts via JSON‐RPC with throttling
+async function sumRangeTx(start, end) {
+  let total = 0;
+  const chunkSize = 50;      // reduced chunk size to avoid hitting rate limits
+  for (let i = start; i < end; i += chunkSize) {
+    const batch = [];
+    const upTo = Math.min(i + chunkSize, end);
+    for (let b = i; b < upTo; b++) {
+      batch.push({
+        jsonrpc: "2.0",
+        id: b,
+        method: "eth_getBlockTransactionCountByNumber",
+        params: ["0x" + b.toString(16)],
+      });
+    }
+    const res = await fetch(MONAD_RPC, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(batch),
+    });
+    const arr = await res.json();
+    total += arr.reduce((sum, r) => sum + parseInt(r.result, 16), 0);
+
+    // brief pause to buffer requests
+    await sleep(100);
+  }
+  return total;
+}
+
+// fetch only header timestamps for binary search
 async function fetchBlockHeader(number) {
   const hex = "0x" + number.toString(16);
   const res = await fetch(MONAD_RPC, {
@@ -30,64 +61,49 @@ async function fetchBlockHeader(number) {
       id: 1,
     }),
   });
-  const json = await res.json();
-  return json.result;
+  return (await res.json()).result;
 }
 
-// find the first block ≥ target timestamp via binary search
+// binary‐search for first block ≥ target timestamp
 async function findBlockByTs(targetTs, low, high) {
   let left = low, right = high;
   while (left <= right) {
-    const mid = Math.floor((left + right) / 2);
-    const header = await fetchBlockHeader(mid);
-    const ts = parseInt(header.timestamp, 16);
-    if (ts < targetTs) {
-      left = mid + 1;
-    } else {
-      right = mid - 1;
-    }
+    const mid = (left + right) >> 1;
+    const ts = parseInt((await fetchBlockHeader(mid)).timestamp, 16);
+    if (ts < targetTs) left = mid + 1;
+    else right = mid - 1;
   }
   return left;
 }
 
 async function fetchDailyTransactionCounts() {
-  // 1. get latest block number
-  const topRes = await fetch(MONAD_RPC, {
+  // get latest block number
+  const top = await fetch(MONAD_RPC, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      jsonrpc: "2.0", method: "eth_blockNumber", params: [], id: 1
-    }),
+    body: JSON.stringify({ jsonrpc: "2.0", method: "eth_blockNumber", params: [], id: 1 }),
   });
-  const latestNum = parseInt((await topRes.json()).result, 16);
+  const latestNum = parseInt((await top.json()).result, 16);
 
   const results = [];
   const today = new Date();
 
-  for (let i = 6; i >= 0; i--) {
-    // compute UTC midnight timestamp for this day
-    const dayStart = new Date(Date.UTC(
+  // only days 1–7 ago
+  for (let i = 7; i >= 1; i--) {
+    const dayStartTs = Date.UTC(
       today.getUTCFullYear(),
       today.getUTCMonth(),
       today.getUTCDate() - i
-    ));
-    const startTs = Math.floor(dayStart.getTime() / 1000);
-    const nextTs  = startTs + 86400;
+    ) / 1000;
+    const nextDayTs = dayStartTs + 86400;
 
-    // 2. locate start/end blocks
-    const startBlock = await findBlockByTs(startTs, 0, latestNum);
-    const endBlock   = await findBlockByTs(nextTs, startBlock, latestNum);
-
-    // 3. sum tx counts using Alchemy
-    let totalTx = 0;
-    for (let b = startBlock; b < endBlock; b++) {
-      const blk = await alchemy.core.getBlock(b, true);
-      totalTx += blk.transactions.length;
-    }
+    const startBlock = await findBlockByTs(dayStartTs, 0, latestNum);
+    const endBlock   = await findBlockByTs(nextDayTs, startBlock, latestNum);
+    const totalTx    = await sumRangeTx(startBlock, endBlock);
 
     results.push({
-      date: dayStart.toISOString().split('T')[0],
-      count: totalTx
+      date: new Date(dayStartTs * 1000).toISOString().split('T')[0],
+      count: totalTx,
     });
   }
 
@@ -102,14 +118,25 @@ export default async function handler(req, res) {
     return res.status(200).json({ purged: true });
   }
 
-  // cache fetch
+  // attempt cache
   let data = await redis.get(CACHE_KEY);
   if (data) {
     console.log("✅ cache hit");
   } else {
-    console.log("🔄 cache miss – running on-chain fetch");
-    data = await fetchDailyTransactionCounts();
-    await redis.set(CACHE_KEY, data, { ex: CACHE_TTL });
+    console.log("🔄 cache miss – fetching on-chain");
+    const fresh = await fetchDailyTransactionCounts();
+
+    // set TTL until next UTC midnight
+    const now    = Date.now();
+    const tmwMid = Date.UTC(
+      new Date().getUTCFullYear(),
+      new Date().getUTCMonth(),
+      new Date().getUTCDate() + 1
+    );
+    const ttlSec = Math.floor((tmwMid - now) / 1000);
+
+    await redis.set(CACHE_KEY, fresh, { ex: ttlSec });
+    data = fresh;
   }
 
   res.setHeader('Content-Type', 'application/json');

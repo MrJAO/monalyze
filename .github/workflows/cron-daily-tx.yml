@@ -3,7 +3,7 @@ name: Backfill Daily TX
 on:
   workflow_dispatch:        # ← manual “Run workflow” button
   schedule:
-    - cron: '*/1 * * * *'   # every 5 minutes while you’re back-filling
+    - cron: '*/10 * * * *'   # every 10 minutes while you’re back-filling
 # …then later switch to '5 0 * * *'…
 
 jobs:

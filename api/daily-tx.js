@@ -14,14 +14,13 @@ const redis = new Redis({
 });
 const CACHE_KEY = 'daily-tx';
 
-// 1️⃣ on-chain fetch for the last 7 days
+// on-chain fetch for the last 7 days
 async function fetchDailyTransactionCounts() {
-  // (pull latest block, binary-search timestamps, batch-count tx, etc…)
-  // -- copy in your optimized version here --
+  // …binary-search blocks, count tx batches, etc…
   // return [{ date: '2025-06-05', count: 123 }, …]
 }
 
-// 2️⃣ helper to compute TTL until next UTC 00:05
+// helper to compute TTL until next UTC 00:05
 function secondsUntilTomorrow0500() {
   const now = Date.now();
   const tomorrow0500 = Date.UTC(
@@ -34,8 +33,6 @@ function secondsUntilTomorrow0500() {
 }
 
 export default async function handler(req, res) {
-  const isCron = req.headers['x-vercel-cron'] === 'true';
-
   // manual purge via DELETE or ?purge=true
   if (req.method === 'DELETE' || req.query.purge === 'true') {
     await redis.del(CACHE_KEY);
@@ -49,17 +46,7 @@ export default async function handler(req, res) {
     return res.status(200).json(fresh);
   }
 
-  // **cron run**: re-compute and overwrite KV
-  if (isCron) {
-    console.log('🕒 cron-daily-tx invoked');
-    const fresh = await fetchDailyTransactionCounts();
-    const ttl   = secondsUntilTomorrow0500();
-    await redis.set(CACHE_KEY, fresh, { ex: ttl });
-    console.log(`✅ cache updated (${fresh.length} days), expires in ${ttl}s`);
-    return res.status(200).json({ ok: true });
-  }
-
-  // **normal browser GET**: read from KV
+  // normal browser GET: read from KV
   const data = await redis.get(CACHE_KEY);
   if (!data) {
     console.log('❌ cache miss');

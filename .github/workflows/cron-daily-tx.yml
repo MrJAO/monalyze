@@ -1,0 +1,25 @@
+name: Backfill Daily TX
+
+on:
+  workflow_dispatch:        # ← manual “Run workflow” button
+  schedule:
+    - cron: '*/1 * * * *'   # every 5 minutes while you’re back-filling
+# …then later switch to '5 0 * * *'…
+
+jobs:
+  backfill:
+    concurrency:
+      group: backfill-daily-tx
+      cancel-in-progress: true
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+      - run: npm ci
+      - run: npm run backfill
+        env:
+          VITE_ALCHEMY_KEY:   ${{ secrets.VITE_ALCHEMY_KEY }}
+          KV_REST_API_URL:    ${{ secrets.KV_REST_API_URL }}
+          KV_REST_API_TOKEN:  ${{ secrets.KV_REST_API_TOKEN }}

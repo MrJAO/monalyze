@@ -8,7 +8,7 @@ export default function DailyTransactions({ triggerNote }) {
   const [activeIdx, setActiveIdx] = useState(-1);
   const idxRef = useRef(0);
 
-  // compute next 00:05 UTC update time
+  // compute next UTC 00:05 update time
   const getNextUpdate = () => {
     const now = new Date();
     const next = new Date(Date.UTC(
@@ -22,25 +22,30 @@ export default function DailyTransactions({ triggerNote }) {
   };
   const nextUpdate = getNextUpdate();
 
-  // fetch data once
+  // fetch once on mount, handle 204 (no content) as empty array
   useEffect(() => {
     (async () => {
       try {
         const res = await fetch("/api/daily-tx");
-        const arr = await res.json();
-        setDailyData(arr);
+        if (res.status === 204) {
+          setDailyData([]);
+        } else {
+          const arr = await res.json();
+          setDailyData(arr);
+        }
       } catch (err) {
         console.error("Failed to load daily tx:", err);
+        setDailyData([]);
       } finally {
         setLoading(false);
       }
     })();
   }, []);
 
-  // pulse on each new block
-  const max = Math.max(...dailyData.map((d) => d.count), 0);
+  // pulse bars on each new block
+  const max = dailyData.length ? Math.max(...dailyData.map(d => d.count)) : 0;
   useEffect(() => {
-    if (!loading && triggerNote != null) {
+    if (!loading && triggerNote != null && dailyData.length) {
       const i = idxRef.current;
       setActiveIdx(i);
       idxRef.current = (i + 1) % dailyData.length;
@@ -79,9 +84,7 @@ export default function DailyTransactions({ triggerNote }) {
       </div>
 
       {!loading && dailyData.length > 0 && (
-        <div className="status">
-          Next update at {nextUpdate}.
-        </div>
+        <div className="status">Next update at {nextUpdate}.</div>
       )}
     </div>
   );

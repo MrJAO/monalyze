@@ -5,10 +5,10 @@ on:
   workflow_dispatch:
   # backfill every 10 minutes while you’re seeding the 7 days
   schedule:
-    - cron: '*/10 * * * *'
+    - cron: '5 0 * * *'
   # …later, after your 7-day history is filled, switch to:
   #   schedule:
-  #     - cron: '5 0 * * *'   # once per day at 00:05 UTC
+  #     - cron: '*/10 * * * *' 10mins - '5 0 * * *'  # once per day at 00:05 UTC
 
 concurrency:
   group: backfill-daily-tx

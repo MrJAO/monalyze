@@ -158,7 +158,7 @@ async function main() {
   const ttl = Math.max(300, Math.floor((tomorrow0500 - now) / 1000));
 
   console.log(`💾 storing ${data.length} days in KV (expires in ${ttl}s)`);
-  await redis.set('daily-tx', data, { ex: ttl });
+  await redis.set('daily-tx', data);
   console.log(`✅ cache updated (${data.length} days), expires in ${ttl}s`);
 }
 

@@ -75,7 +75,7 @@ export default function DailyTransactions({ triggerNote }) {
                 style={{ height: `${pct}%` }}
                 title={`${date}: ${count} tx`}
               >
-                <div className="bar-label">{count}</div>
+                <div className="bar-label">{count.toLocaleString()}</div>
               </div>
               <div className="bar-date">{date}</div>
             </div>

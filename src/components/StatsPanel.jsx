@@ -1,6 +1,7 @@
 // StatsPanel.jsx
 import React, { useEffect, useState, useRef } from "react";
 import "./StatsPanel.css";
+import Auditorium from "./Auditorium";
 import { Alchemy } from "alchemy-sdk";
 
 const ALCHEMY_API_KEY = import.meta.env.VITE_ALCHEMY_KEY;
@@ -112,25 +113,33 @@ const StatsPanel = () => {
 
   return (
     <div className="stats-panel-wrapper">
-      <div className="stats-boxes">
-        <div className="stat-item">
-          <strong>Current Block:</strong>
-          <div>{stats.currentBlock.toLocaleString()}</div>
+      {/* top: stats + auditorium side by side */}
+      <div className="stats-main">
+        <div className="stats-boxes">
+          <div className="stat-item">
+            <strong>Current Block:</strong>
+            <div>{stats.currentBlock.toLocaleString()}</div>
+          </div>
+          <div className="stat-item">
+            <strong>TPS (Last 20 Blocks):</strong>
+            <div>{stats.txPerSecond}</div>
+          </div>
+          <div className="stat-item">
+            <strong>Gas Fee:</strong>
+            <div>{stats.gasFee}</div>
+          </div>
+          <div className="stat-item">
+            <strong>Average Gas Fee Used:</strong>
+            <div>{stats.avgGasUsed}</div>
+          </div>
         </div>
-        <div className="stat-item">
-          <strong>TPS (Last 20 Blocks):</strong>
-          <div>{stats.txPerSecond}</div>
-        </div>
-        <div className="stat-item">
-          <strong>Gas Fee:</strong>
-          <div>{stats.gasFee}</div>
-        </div>
-        <div className="stat-item">
-          <strong>Average Gas Fee Used:</strong>
-          <div>{stats.avgGasUsed}</div>
+
+        <div className="auditorium-container">
+          <Auditorium rows={7} cols={10} />
         </div>
       </div>
 
+      {/* bottom: music line */}
       <div className="music-line-box">
         <span className="clef">🎼</span>
         <div className="music-line-content">

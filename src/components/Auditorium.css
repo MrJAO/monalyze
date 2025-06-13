@@ -1,0 +1,72 @@
+.auditorium {
+  position: relative;
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+  background: #8e2d35;        /* side‐wall color */
+  padding: 20px 10px;
+  box-sizing: border-box;
+}
+
+/* the stage at top */
+.stage {
+  width: 100%;
+  height: 100px;
+  margin: 0 auto 12px;
+  background: #eee;
+  border-bottom: 12px solid #b88649; /* front-of-stage trim */
+}
+
+/* seating area */
+.seating {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* each row is a “step” of wood floor */
+.row {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  background: #d19b67;  /* wood color */
+  padding: 8px 0;
+  border-radius: 4px;
+}
+
+/* individual seats */
+.seat {
+  width: 30px;
+  height: 30px;
+  background: #832f35;
+  border-radius: 4px;
+  box-shadow: inset 0 -2px 2px rgba(0,0,0,0.3);
+}
+
+/* side walls container */
+.wall {
+  position: absolute;
+  top: 20px;
+  bottom: 20px;
+  width: 8px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.wall-left {
+  left: 0;
+}
+
+.wall-right {
+  right: 0;
+}
+
+/* little speakers on the walls */
+.speaker {
+  width: 8px;
+  height: 8px;
+  background: #708090;
+  border-radius: 2px;
+}

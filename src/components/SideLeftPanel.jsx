@@ -1,8 +1,10 @@
+// SideLeftPanel.jsx
 import React, { useEffect, useState } from "react";
-import './SideLeftPanel.css';
+import "./SideLeftPanel.css";
 
 const HYPER_RPC = "https://monad-testnet.rpc.hypersync.xyz";
-const ERC20_TRANSFER_SIG = "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef";
+const ERC20_TRANSFER_SIG =
+  "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef";
 
 const TOKEN_NAME_MAP = {
   "native": "MON",
@@ -23,9 +25,8 @@ const TOKEN_NAME_MAP = {
   "0xaeef2f6b429cb59c9b2d7bb2141ada993e8571c3": "gMON"
 };
 
-const fetchTokenName = async (tokenAddress) => {
-  return TOKEN_NAME_MAP[tokenAddress.toLowerCase()] || "Unknown";
-};
+const fetchTokenName = async (tokenAddress) =>
+  TOKEN_NAME_MAP[tokenAddress.toLowerCase()] || "Unknown";
 
 const SideLeftPanel = ({ onNewTransfer }) => {
   const [transfers, setTransfers] = useState([]);
@@ -35,11 +36,13 @@ const SideLeftPanel = ({ onNewTransfer }) => {
       jsonrpc: "2.0",
       id: 1,
       method: "eth_getLogs",
-      params: [{
-        fromBlock: "latest",
-        toBlock: "latest",
-        topics: [ERC20_TRANSFER_SIG]
-      }]
+      params: [
+        {
+          fromBlock: "latest",
+          toBlock: "latest",
+          topics: [ERC20_TRANSFER_SIG],
+        },
+      ],
     };
 
     try {
@@ -48,26 +51,20 @@ const SideLeftPanel = ({ onNewTransfer }) => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body),
       });
-
       const data = await res.json();
       const logs = data.result || [];
 
       if (logs.length > 0) {
-        const log = logs[logs.length - 1]; // latest one
+        const log = logs[logs.length - 1];
         const tokenName = await fetchTokenName(log.address);
+        const newTx = { hash: log.transactionHash, asset: tokenName };
 
-        const newTx = {
-          hash: log.transactionHash,
-          asset: tokenName,
-        };
-
-        setTransfers(prev => {
-          const updated = [newTx, ...prev.filter(t => t.hash !== newTx.hash)];
-          return updated.slice(0, 5);
-        });
+        setTransfers((prev) =>
+          [newTx, ...prev.filter((t) => t.hash !== newTx.hash)].slice(0, 5)
+        );
 
         if (typeof onNewTransfer === "function") {
-          onNewTransfer(tokenName); // trigger violin
+          onNewTransfer(tokenName);
         }
       }
     } catch (err) {
@@ -82,17 +79,19 @@ const SideLeftPanel = ({ onNewTransfer }) => {
   }, []);
 
   return (
-    <div className="panel-box w-full">
-      <div className="stats-boxes" style={{ padding: "1rem" }}>
-        <div className="stat-item" style={{ width: "100%" }}>
+    <div className="side-panel-box">
+      <div className="side-stats-boxes">
+        <div className="side-stat-item">
           <strong>Latest Token Transfers</strong>
-          <div className="token-list" style={{ marginTop: "0.75rem" }}>
+          <div className="side-token-list">
             {transfers.map((tx, idx) => (
-              <div key={idx} style={{ marginBottom: "0.6rem", fontSize: "0.8rem", display: "flex", alignItems: "center", gap: "0.5rem" }}>
+              <div key={idx}>
                 <span>🔗</span>
-                <span style={{ fontFamily: "monospace" }}>{tx.hash.slice(0, 10)}...</span>
+                <span style={{ fontFamily: "monospace" }}>
+                  {tx.hash.slice(0, 10)}…
+                </span>
                 <span>—</span>
-                <span><strong>{tx.asset}</strong></span>
+                <strong>{tx.asset}</strong>
               </div>
             ))}
           </div>

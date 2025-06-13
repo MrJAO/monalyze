@@ -53,6 +53,12 @@ export default function DailyTransactions({ triggerNote }) {
     }
   }, [triggerNote, loading, dailyData.length]);
 
+  // --- Dynamic Min-Max Scaling for bar heights ---
+  const counts = dailyData.map(d => d.count);
+  const min = counts.length ? Math.min(...counts) : 0;
+  const minHeight = 15; // percent, minimum bar height (adjust as needed)
+  const maxHeight = 100;
+
   return (
     <div className="daily-container">
       <h2>Daily Transactions</h2>
@@ -67,7 +73,9 @@ export default function DailyTransactions({ triggerNote }) {
 
       <div className="bars">
         {dailyData.map(({ date, count }, i) => {
-          const pct = max ? (count / max) * 100 : 0;
+          const pct = max > min
+            ? minHeight + ((count - min) / (max - min)) * (maxHeight - minHeight)
+            : 100;
           return (
             <div className="bar-wrapper" key={date}>
               <div

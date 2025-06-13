@@ -33,14 +33,18 @@
   background-size: 100% 200%;          /* double-height for color wave */
   background-position: 0% 0%;
   position: relative;
-  transition: height 0.3s ease;
+  /* Improved, smooth transitions for height, background, and transform */
+  transition:
+    height 0.7s cubic-bezier(0.22, 1, 0.36, 1),
+    background 0.7s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
   transform-origin: bottom;
   animation: colorwave 2s ease-in-out infinite; /* continuous color wave */
 }
 
 .bar.pulse {
   animation:
-    pulse 0.4s ease-out,               /* height pulse */
+    pulse 0.4s ease-out,
     colorwave 2s ease-in-out infinite; /* keep color wave running */
 }
 

@@ -61,7 +61,7 @@ export default function DailyTransactions({ triggerNote }) {
 
   return (
     <div className="daily-container">
-      <h2>Daily Transactions</h2>
+      <h2 className="center-text">Daily Transactions</h2>
 
       {loading ? (
         <div className="status">Loading daily transactions…</div>

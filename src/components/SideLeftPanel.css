@@ -1,5 +1,5 @@
 .panel-box {
-  background: #2a1558;
+  background: #16161a;
   color: #d1b3ff;
   padding: 1.5rem;
   border-radius: 0.75rem;
@@ -8,7 +8,7 @@
   max-width: 100%;
   overflow-x: hidden;
   box-sizing: border-box;
-  border: 1px solid #5e3ab9;
+  border: 1px solid #facc15;
   transition: background 0.3s ease, box-shadow 0.3s ease;
 }
 

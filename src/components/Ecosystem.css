@@ -1,0 +1,191 @@
+.ecosystem-container {
+  margin-top: 2.5rem;
+  border: 2px solid #facc15;
+  border-radius: 0.5rem;
+  padding: 1.5rem 1.5rem 2.5rem 1.5rem;
+  background: #16161a;
+}
+
+.eco-title {
+  text-align: center;
+  font-size: 2.5rem;
+  font-weight: bold;
+  color: #ffffff;
+  margin-bottom: 1.5rem;
+  letter-spacing: 0.01em;
+}
+
+.eco-main {
+  display: flex;
+  gap: 2rem;
+  align-items: flex-start;
+}
+
+/* 🎹 Piano sidebar */
+.eco-piano {
+  width: 185px;
+  position: relative;
+  border-left: 2px solid #222;
+  background: #fff;
+  padding: 0.5rem 0;
+}
+.eco-piano-keys {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+}
+.eco-key-row {
+  position: relative;
+  height: 32px;
+  width: 100%;
+}
+.eco-key-row::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: #222;
+  z-index: 1;
+}
+.eco-white-key {
+  position: absolute;
+  inset: 0;
+  background: #fff;
+  z-index: 0;
+  pointer-events: none;
+}
+.eco-black-key {
+  position: absolute;
+  top: 3px;
+  right: 8px;
+  width: 110px;
+  height: 26px;
+  background: #000;
+  color: #fff;
+  border: none;
+  border-radius: 0 0 4px 4px;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+  outline: none;
+}
+.eco-black-key-active,
+.eco-black-key:active,
+.eco-black-key:focus {
+  background: #facc15;
+  color: #16161a;
+}
+
+/* Projects grid */
+.eco-project-list {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+.eco-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+  gap: 1.6rem;
+}
+.eco-card {
+  background: #fff;
+  border-radius: 1rem;
+  box-shadow: 0 3px 16px #2224;
+  padding: 1.2rem;
+  color: #222;
+  display: flex;
+  flex-direction: column;
+  min-height: 230px;
+  position: relative;
+  border: 1.5px solid #eee;
+}
+
+/* logo instead of img/banner */
+.eco-card-logo {
+  width: 48px;
+  height: 48px;
+  object-fit: contain;
+  margin-bottom: 0.8rem;
+}
+
+/* content area grows */
+.eco-card-content {
+  flex: 1;
+}
+
+/* title + desc */
+.eco-card-title {
+  font-weight: 600;
+  font-size: 1.18rem;
+  margin-bottom: 0.4rem;
+}
+.eco-card-desc {
+  font-size: 0.98rem;
+  color: #3a3a3a;
+  margin-bottom: 0.7rem;
+}
+
+/* footer: Trade button + icon */
+.eco-card-footer {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: auto;
+}
+.eco-card-btn {
+  background: #4f46e5;
+  color: #fff;
+  font-weight: bold;
+  font-size: 1.1rem;
+  border: none;
+  border-radius: 0.35rem;
+  padding: 0.39rem 1.5rem;
+  box-shadow: 0 2px 6px #4f46e524;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background 0.2s;
+}
+.eco-card-btn:hover {
+  background: #facc15;
+  color: #222;
+}
+.eco-card-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  color: #222;
+  transition: color 0.2s;
+}
+.eco-card-icon:hover {
+  color: #4f46e5;
+}
+
+.eco-empty {
+  padding: 2.5rem 1rem;
+  color: #999;
+  text-align: center;
+  font-size: 1.2rem;
+}
+
+/* Responsive tweaks */
+@media (max-width: 800px) {
+  .eco-piano {
+    width: 140px;
+  }
+  .eco-black-key {
+    width: 80px;
+    height: 20px;
+    font-size: 0.9rem;
+    right: 6px;
+    top: 3px;
+  }
+}

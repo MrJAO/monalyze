@@ -2,9 +2,10 @@
 
 .daily-container {
   padding: 1rem;
-  border: 2px solid #4f46e5;
+  border: 2px solid #facc15;
   border-radius: 0.5rem;
   margin-top: 2rem;
+  background: #16161a;
 }
 .daily-container h2 {
   margin-bottom: 1rem;

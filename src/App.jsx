@@ -6,6 +6,7 @@ import ViolinVisualizer from './components/ViolinVisualizer';
 import LatestBlocksMock from './components/LatestBlocksMock';
 import SideLeftPanel from './components/SideLeftPanel';
 import DailyTransactions from './components/DailyTransactions';
+import Ecosystem from './components/Ecosystem';
 import React, { useState, useEffect } from 'react';
 
 function App() {
@@ -45,6 +46,7 @@ function App() {
         </div>
 
         <DailyTransactions triggerNote={noteTrigger} />
+        <Ecosystem />
       </div>
     </div>
   );

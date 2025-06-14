@@ -90,7 +90,13 @@ async function fetch1MissingDayTx(existingDates) {
 // —————————————————————————————
 async function main() {
   console.log("🕒 backfill started (1-day mode)");
-  const existing = await redis.get('daily-tx') || [];
+  let existing = await redis.get('daily-tx');
+
+  if (!Array.isArray(existing)) {
+    console.log("ℹ️ KV is empty or corrupt — starting fresh.");
+    existing = [];
+  }
+
   const dateSet = new Set(existing.map(d => d.date));
   const newDay = await fetch1MissingDayTx(dateSet);
 

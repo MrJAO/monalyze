@@ -100,3 +100,13 @@
     max-height: none;
   }
 }
+
+/* 📱 horizontal scroll for wide rows */
+@media (max-width: 600px) {
+  .row {
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    padding: 0.5rem;
+  }
+}

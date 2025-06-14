@@ -189,3 +189,12 @@
     top: 3px;
   }
 }
+
+@media (max-width: 640px) {
+  .eco-main {
+    flex-direction: column;
+  }
+  .eco-cards {
+    grid-template-columns: repeat(auto-fit, minmax(100%, 1fr));
+  }
+}

@@ -17,6 +17,8 @@
   gap: 0.5rem;
   align-items: flex-end;
   height: 12rem;
+  overflow-x: auto;
+  padding-bottom: 0.25rem;
 }
 
 .bar-wrapper {
@@ -26,6 +28,7 @@
   flex-direction: column;
   justify-content: flex-end;
   align-items: center;
+  min-width: 40px;
 }
 
 .bar {
@@ -71,4 +74,21 @@
   margin-top: 0.25rem;
   font-size: 0.75rem;
   color: #fff;
+}
+
+/* 📱 Mobile: allow horizontal scroll if squeezed */
+@media (max-width: 600px) {
+  .bars {
+    overflow-x: auto;
+    gap: 0.25rem;
+  }
+
+  .bar-wrapper {
+    min-width: 32px;
+  }
+
+  .bar-label,
+  .bar-date {
+    font-size: 0.65rem;
+  }
 }

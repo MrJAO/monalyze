@@ -193,3 +193,18 @@ button:focus-visible {
     width: auto;
   }
 }
+
+/* 📱 Mobile Stacking for narrow screens */
+@media (max-width: 768px) {
+  .main-layout {
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+
+  .left-panel,
+  .center-panel {
+    max-width: 100%;
+    width: 100%;
+    flex: 1 1 100%;
+  }
+}

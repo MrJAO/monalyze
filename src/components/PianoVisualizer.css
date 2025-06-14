@@ -68,3 +68,20 @@
 .black-key.active {
   background: #facc15;
 }
+
+/* 📱 Mobile adjustments */
+@media (max-width: 768px) {
+  .white-keys {
+    min-width: 600px; /* reduce overall key area */
+  }
+
+  .white-key {
+    width: 30px;
+    font-size: 8px;
+  }
+
+  .black-key {
+    width: 20px;
+    font-size: 7px;
+  }
+}

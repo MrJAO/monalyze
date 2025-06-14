@@ -57,48 +57,28 @@ async function findBlockByTs(targetTs, low, high) {
 }
 
 // —————————————————————————————
-// 4) Count transactions in a block range, in batches
+// 4) Count transactions in a block range (fallback method)
 async function countTransactions(start, end) {
   console.log(`⏳ countTransactions: counting TXs from block ${start} to ${end - 1}`);
   let total = 0;
-  const batchSize    = 50;
-  const totalBatches = Math.ceil((end - start) / batchSize);
 
-  for (let i = start; i < end; i += batchSize) {
-    const batchNum = Math.floor((i - start) / batchSize) + 1;
-    const upTo     = Math.min(end, i + batchSize);
-
-    console.log(`   📦 batch ${batchNum}/${totalBatches}: blocks ${i}→${upTo - 1}`);
-    const payload = [];
-    for (let b = i; b < upTo; b++) {
-      payload.push({
-        jsonrpc: '2.0',
-        id:      b,
-        method:  'eth_getBlockTransactionCountByNumber',
-        params:  ['0x' + b.toString(16)],
-      });
-    }
-
-    const resp = await fetch(MONAD_RPC, {
-      method:  'POST',
+  for (let b = start; b < end; b++) {
+    const hex = '0x' + b.toString(16);
+    const res = await fetch(MONAD_RPC, {
+      method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body:    JSON.stringify(payload),
+      body: JSON.stringify({
+        jsonrpc: '2.0',
+        id: b,
+        method: 'eth_getBlockByNumber',
+        params: [hex, true],
+      }),
     });
-    const arr = await resp.json();
 
-    let batchCount = 0;
-    for (const r of arr) {
-      if (!r || typeof r.result !== 'string' || !r.result.startsWith('0x')) {
-        console.warn(`⚠️ invalid result for id ${r?.id}:`, r);
-        continue;
-      }
-      const txCount = parseInt(r.result, 16);
-      batchCount += txCount;
-    }
-    console.log(`     → batch ${batchNum} count: ${batchCount}`);
-    total += batchCount;
-
-    await sleep(50);
+    const json = await res.json();
+    const txs = json?.result?.transactions || [];
+    total += txs.length;
+    await sleep(25);
   }
 
   console.log(`   → countTransactions total: ${total} TX`);
@@ -155,19 +135,9 @@ async function main() {
     process.exit(1);
   }
 
-  // compute TTL until next UTC 00:05
-  const now         = Date.now();
-  const tomorrow0500 = Date.UTC(
-    new Date().getUTCFullYear(),
-    new Date().getUTCMonth(),
-    new Date().getUTCDate() + 1,
-    0, 5, 0
-  );
-  const ttl = Math.max(300, Math.floor((tomorrow0500 - now) / 1000));
-
-  console.log(`💾 storing ${data.length} days in KV (expires in ${ttl}s)`);
+  console.log(`💾 storing ${data.length} days in KV`);
   await redis.set('daily-tx', data);
-  console.log(`✅ cache updated (${data.length} days), expires in ${ttl}s`);
+  console.log(`✅ cache updated (${data.length} days)`);
 }
 
 main().catch(err => {

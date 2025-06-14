@@ -16,14 +16,11 @@
   display: flex;
   gap: 0.5rem;
   align-items: flex-end;
-  height: clamp(8rem, 30vh, 12rem);
-  overflow-x: auto;
-  padding-bottom: 0.25rem;
+  height: 12rem;
 }
 
 .bar-wrapper {
-  flex: 1 1 0;
-  min-width: 0;
+  flex: 1;
   height: 100%;
   display: flex;
   flex-direction: column;
@@ -31,31 +28,25 @@
   align-items: center;
 }
 
-.bar-label {
-  margin-bottom: 0.25rem;
-  font-size: 0.75rem;
-  color: #fff;
-}
-
 .bar {
   width: 100%;
-  flex-grow: 1;
   background: linear-gradient(to top, #facc15, #d946ef);
   background-size: 100% 200%;          /* double-height for color wave */
   background-position: 0% 0%;
   position: relative;
+  /* Improved, smooth transitions for height, background, and transform */
   transition:
     height 0.7s cubic-bezier(0.22, 1, 0.36, 1),
     background 0.7s cubic-bezier(0.22, 1, 0.36, 1),
     transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
   transform-origin: bottom;
-  animation: colorwave 2s ease-in-out infinite;
+  animation: colorwave 2s ease-in-out infinite; /* continuous color wave */
 }
 
 .bar.pulse {
   animation:
     pulse 0.4s ease-out,
-    colorwave 2s ease-in-out infinite;
+    colorwave 2s ease-in-out infinite; /* keep color wave running */
 }
 
 @keyframes pulse {
@@ -69,25 +60,15 @@
   100% { background-position: 0% 0%; }
 }
 
-.bar-date {
-  margin-top: 0.25rem;
+.bar-label {
+  position: absolute;
+  top: -1.2rem;
   font-size: 0.75rem;
   color: #fff;
 }
 
-/* 📱 Mobile: allow horizontal scroll if squeezed */
-@media (max-width: 600px) {
-  .bars {
-    overflow-x: auto;
-    gap: 0.25rem;
-  }
-
-  .bar-wrapper {
-    min-width: 32px;
-  }
-
-  .bar-label,
-  .bar-date {
-    font-size: 0.65rem;
-  }
+.bar-date {
+  margin-top: 0.25rem;
+  font-size: 0.75rem;
+  color: #fff;
 }

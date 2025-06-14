@@ -42,7 +42,7 @@ export default async function handler(req, res) {
   // force on-chain backfill via ?force=true
   if (req.query.force === 'true') {
     const fresh = await fetchDailyTransactionCounts();
-    await redis.set(CACHE_KEY, fresh, { ex: 24 * 3600 });
+    await redis.set(CACHE_KEY, fresh); // ❌ TTL removed here
     return res.status(200).json(fresh);
   }
 

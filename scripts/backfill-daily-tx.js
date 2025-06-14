@@ -85,11 +85,19 @@ async function countTransactions(start, end) {
       body:    JSON.stringify(payload),
     });
     const arr = await resp.json();
-    for (const r of arr) {
-      total += parseInt(r.result || '0x0', 16);
-    }
 
-    console.log(`     → batch ${batchNum} count: ${total}`);
+    let batchCount = 0;
+    for (const r of arr) {
+      if (!r || typeof r.result !== 'string' || !r.result.startsWith('0x')) {
+        console.warn(`⚠️ invalid result for id ${r?.id}:`, r);
+        continue;
+      }
+      const txCount = parseInt(r.result, 16);
+      batchCount += txCount;
+    }
+    console.log(`     → batch ${batchNum} count: ${batchCount}`);
+    total += batchCount;
+
     await sleep(50);
   }
 

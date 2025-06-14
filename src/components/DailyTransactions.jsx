@@ -8,19 +8,19 @@ export default function DailyTransactions({ triggerNote }) {
   const [activeIdx, setActiveIdx] = useState(-1);
   const idxRef = useRef(0);
 
-  // compute next UTC 00:05 update time
-  const getNextUpdate = () => {
-    const now = new Date();
-    const next = new Date(Date.UTC(
-      now.getUTCFullYear(),
-      now.getUTCMonth(),
-      now.getUTCDate(),
-      0, 5, 0
-    ));
-    if (next <= now) next.setUTCDate(next.getUTCDate() + 1);
-    return next.toISOString().replace("T", " ").split(".")[0] + " UTC";
-  };
-  const nextUpdate = getNextUpdate();
+// compute next UTC 04:00 update time
+const getNextUpdate = () => {
+  const now = new Date();
+  const next = new Date(Date.UTC(
+    now.getUTCFullYear(),
+    now.getUTCMonth(),
+    now.getUTCDate(),
+    4, 0, 0
+  ));
+  if (next <= now) next.setUTCDate(next.getUTCDate() + 1);
+  return next.toISOString().replace("T", " ").split(".")[0] + " UTC";
+};
+const nextUpdate = getNextUpdate();
 
   // fetch once on mount, handle 204 (no content) as empty array
   useEffect(() => {

@@ -1,58 +1,76 @@
-/* Auditorium.css */
+/* hide the mock’s own UI */
+.latest-blocks-mock {
+  display: none !important;
+}
 
+/* transaction header above stage */
+.transaction-header {
+  text-align: center;
+  background: #fff;
+  padding: clamp(0.5rem, 2vw, 0.75rem) clamp(0.5rem, 2vw, 1rem);
+  color: #000;
+  font-size: clamp(1rem, 2.5vw, 1.5rem);
+}
+
+.trans-count {
+  font-weight: bold;
+}
+
+.trans-start {
+  font-size: clamp(0.75rem, 2vw, 1rem);
+  font-style: italic;
+  margin-top: 0.25rem;
+}
+
+/* rest of your original styles… */
 .auditorium {
   position: relative;
   width: 100%;
-  /* removed fixed max-width to allow fluid resizing */
-  padding: 1rem 0.5rem;          /* switched to rem for responsiveness */
+  padding: 1rem 0.5rem;
   box-sizing: border-box;
-  background: #8e2d35;           /* side‐wall color */
-  overflow-x: auto;              /* allow horizontal scroll on narrow screens */
+  background: #8e2d35;
+  overflow-x: auto;
 }
 
-/* the stage at top */
-.stage {
-  width: 100%;
-  height: 8vw;                   /* responsive height */
-  max-height: 120px;
-  margin-bottom: 0.75rem;
-  background: #eee;
-  border-bottom: 1rem solid #b88649; /* front‐of‐stage trim */
-  box-sizing: border-box;
-}
-
-/* seating area */
 .seating {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;                   /* use rem-based gap */
+  gap: 0.5rem;
 }
 
-/* each row is a “step” of wood floor */
 .row {
   display: flex;
-  flex-wrap: wrap;               /* seats wrap if too many */
+  flex-wrap: wrap;
   justify-content: center;
   gap: 0.5rem;
   width: 100%;
-  background: #d19b67;           /* wood color */
+  background: #d19b67;
   padding: 0.5rem 0;
   border-radius: 0.25rem;
   box-sizing: border-box;
 }
 
-/* individual seats */
 .seat {
-  flex: 0 0 3vw;                 /* responsive sizing */
+  flex: 0 0 3vw;
   max-width: 30px;
   max-height: 30px;
   height: 3vw;
   background: #832f35;
   border-radius: 0.25rem;
-  box-shadow: inset 0 -0.125rem 0.125rem rgba(0,0,0,0.3);
+  box-shadow: inset 0 -0.125rem 0.125rem rgba(0, 0, 0, 0.3);
 }
 
-/* side walls container */
+/* audience avatars */
+.audience {
+  flex: 0 0 3vw;
+  max-width: 30px;
+  max-height: 30px;
+  height: 3vw;
+  object-fit: contain;
+  border-radius: 0.25rem;
+}
+
+/* walls & speakers */
 .wall {
   position: absolute;
   top: 1rem;
@@ -63,11 +81,9 @@
   justify-content: space-between;
 }
 
-/* left and right walls */
 .wall-left { left: 0; }
 .wall-right { right: 0; }
 
-/* little speakers on the walls */
 .speaker {
   width: 0.5rem;
   height: 0.5rem;
@@ -75,7 +91,12 @@
   border-radius: 0.125rem;
 }
 
-/* media query: scale down seats on very small screens */
+/* seat‐scale fallback for tiny screens */
 @media (max-width: 400px) {
-  .seat { flex: 0 0 6vw; max-width: none; max-height: none; }
+  .seat,
+  .audience {
+    flex: 0 0 6vw;
+    max-width: none;
+    max-height: none;
+  }
 }

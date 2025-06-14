@@ -13,56 +13,54 @@ export default function Auditorium({ rows = 7, cols = 10 }) {
     Array.from({ length: cols })
   );
 
-  // transaction counter
+  // audience count & start time
   const [count, setCount] = useState(0);
   const [startTime, setStartTime] = useState(null);
 
-  // list of active audiences: { id, row, col, src }
+  // active audience avatars
   const [audiences, setAudiences] = useState([]);
 
-  // callback invoked by LatestBlocksMock on each new block
+  // on each new block, increment count and place an avatar
   const handleNewBlock = useCallback(() => {
-    if (count === 0) {
-      setStartTime(new Date());
-    }
+    // record the moment we start counting (only once)
+    setStartTime((prev) => prev ?? new Date());
     setCount((c) => c + 1);
 
-    // pick a random empty seat
+    // find empty seats
     const empties = [];
-    seating.forEach((r, i) =>
-      r.forEach((_, j) => {
+    seating.forEach((rowArr, i) =>
+      rowArr.forEach((_, j) => {
         if (!audiences.find((a) => a.row === i && a.col === j)) {
           empties.push({ row: i, col: j });
         }
       })
     );
     if (!empties.length) return;
-    const { row, col } = empties[Math.floor(Math.random() * empties.length)];
 
-    // pick a random avatar
+    // choose a random seat and avatar
+    const { row, col } = empties[Math.floor(Math.random() * empties.length)];
     const pics = [molandak, moyaki, chog];
     const src = pics[Math.floor(Math.random() * pics.length)];
     const id = `${Date.now()}-${row}-${col}`;
+
+    // add to audience
     setAudiences((prev) => [...prev, { id, row, col, src }]);
 
-    // now disappear after 15–20 seconds
+    // remove after 15–20 seconds
     const delay = 15000 + Math.random() * 5000;
     setTimeout(() => {
       setAudiences((prev) => prev.filter((a) => a.id !== id));
     }, delay);
-  }, [audiences, count, seating]);
+  }, [audiences, seating]);
 
   return (
     <div className="auditorium">
-      {/* background listener (UI hidden) */}
+      {/* hidden listener */}
       <div style={{ display: "none" }}>
-        <LatestBlocksMock
-          setAvgGasUsed={() => {}}
-          onNewBlock={handleNewBlock}
-        />
+        <LatestBlocksMock setAvgGasUsed={() => {}} onNewBlock={handleNewBlock} />
       </div>
 
-      {/* 1) Transaction header */}
+      {/* audience count header */}
       <div className="transaction-header">
         <div className="trans-count">Audience Counts (TX): {count}</div>
         <div className="trans-start">
@@ -70,19 +68,17 @@ export default function Auditorium({ rows = 7, cols = 10 }) {
         </div>
       </div>
 
-      {/* 2) Seating with audiences */}
+      {/* seating with avatars */}
       <div className="seating">
         {seating.map((rowArr, i) => (
           <div className="row" key={i}>
             {rowArr.map((_, j) => {
-              const occupant = audiences.find(
-                (a) => a.row === i && a.col === j
-              );
-              return occupant ? (
+              const occ = audiences.find((a) => a.row === i && a.col === j);
+              return occ ? (
                 <img
                   key={j}
                   className="audience"
-                  src={occupant.src}
+                  src={occ.src}
                   alt="audience"
                 />
               ) : (
@@ -93,7 +89,7 @@ export default function Auditorium({ rows = 7, cols = 10 }) {
         ))}
       </div>
 
-      {/* 3) Side walls & speakers */}
+      {/* walls & speakers */}
       <div className="wall wall-left">
         {Array(rows)
           .fill()

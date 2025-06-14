@@ -57,10 +57,11 @@ async function findBlockByTs(targetTs, low, high) {
 }
 
 // —————————————————————————————
-// 4) Count transactions in a block range (fallback method)
+// 4) Count transactions in a block range (optimized)
 async function countTransactions(start, end) {
   console.log(`⏳ countTransactions: counting TXs from block ${start} to ${end - 1}`);
   let total = 0;
+  let scanned = 0;
 
   for (let b = start; b < end; b++) {
     const hex = '0x' + b.toString(16);
@@ -78,6 +79,12 @@ async function countTransactions(start, end) {
     const json = await res.json();
     const txs = json?.result?.transactions || [];
     total += txs.length;
+
+    scanned++;
+    if (scanned % 500 === 0) {
+      console.log(`   → scanned ${scanned} blocks so far, total TXs: ${total}`);
+    }
+
     await sleep(25);
   }
 

@@ -4,23 +4,23 @@ import "./DailyTransactions.css";
 
 export default function DailyTransactions({ triggerNote }) {
   const [dailyData, setDailyData] = useState([]);
-  const [loading, setLoading]   = useState(true);
+  const [loading, setLoading] = useState(true);
   const [activeIdx, setActiveIdx] = useState(-1);
   const idxRef = useRef(0);
 
-// compute next UTC 04:00 update time
-const getNextUpdate = () => {
-  const now = new Date();
-  const next = new Date(Date.UTC(
-    now.getUTCFullYear(),
-    now.getUTCMonth(),
-    now.getUTCDate(),
-    4, 0, 0
-  ));
-  if (next <= now) next.setUTCDate(next.getUTCDate() + 1);
-  return next.toISOString().replace("T", " ").split(".")[0] + " UTC";
-};
-const nextUpdate = getNextUpdate();
+  // compute next UTC 04:00 update time
+  const getNextUpdate = () => {
+    const now = new Date();
+    const next = new Date(Date.UTC(
+      now.getUTCFullYear(),
+      now.getUTCMonth(),
+      now.getUTCDate(),
+      4, 0, 0
+    ));
+    if (next <= now) next.setUTCDate(next.getUTCDate() + 1);
+    return next.toISOString().replace("T", " ").split(".")[0] + " UTC";
+  };
+  const nextUpdate = getNextUpdate();
 
   // fetch once on mount, handle 204 (no content) as empty array
   useEffect(() => {
@@ -56,7 +56,7 @@ const nextUpdate = getNextUpdate();
   // --- Dynamic Min-Max Scaling for bar heights ---
   const counts = dailyData.map(d => d.count);
   const min = counts.length ? Math.min(...counts) : 0;
-  const minHeight = 15; // percent, minimum bar height (adjust as needed)
+  const minHeight = 15;
   const maxHeight = 100;
 
   return (
@@ -78,13 +78,12 @@ const nextUpdate = getNextUpdate();
             : 100;
           return (
             <div className="bar-wrapper" key={date}>
+              <div className="bar-label">{count.toLocaleString()}</div>
               <div
                 className={`bar${activeIdx === i ? " pulse" : ""}`}
-                style={{ height: `${pct}%` }}
+                style={{ flexGrow: 0, height: `${pct}%` }}
                 title={`${date}: ${count} tx`}
-              >
-                <div className="bar-label">{count.toLocaleString()}</div>
-              </div>
+              />
               <div className="bar-date">{date}</div>
             </div>
           );

@@ -69,7 +69,7 @@ async function fetch1MissingDayTx(existingDates) {
   const today = new Date();
   const latest = await alchemy.core.getBlockNumber();
 
-  for (let i = 7; i >= 1; i--) {
+  for (let i = 7; i >= 0; i--) { // ✅ now includes today (i = 0)
     const ts = Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate() - i) / 1000;
     const next = ts + 86400;
     const dateStr = new Date(ts * 1000).toISOString().split("T")[0];

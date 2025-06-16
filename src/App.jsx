@@ -45,7 +45,6 @@ function App() {
           </div>
         </div>
 
-        <DailyTransactions triggerNote={noteTrigger} />
         <Ecosystem />
       </div>
     </div>

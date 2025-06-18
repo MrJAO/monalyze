@@ -1,12 +1,22 @@
-# React + Vite
+# Monalyze
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+**Monalyze** is a simple RPC visualizer and tracker for both **Monad's own RPC** and **Envio RPC**.  
+I believe having an RPC tracker is important to monitor the RPC statuses during both **testnet** and **mainnet** phases.
 
-Currently, two official plugins are available:
+### What It Tracks
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+Monalyze displays real-time and near-real-time status by tracking:
 
-## Expanding the ESLint configuration
+1. **Current Blocks**
+2. **TPS** (Transactions Per Second over the last 20 blocks)
+3. **Gas Fee**
+4. **Average Gas Fee Used** (over the last 20 blocks)
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+### Ecosystem Tab
+
+The **Ecosystem** section is a bonus feature showing useful information for users who need related details about the Monad ecosystem.
+
+### Important Note
+
+- **Current Block**, **TPS**, and **Average Gas Fee Used** may take a few minutes to reflect the most up-to-date values.
+- This is due to intentional throttling in block fetching to avoid exceeding RPC rate limits.
